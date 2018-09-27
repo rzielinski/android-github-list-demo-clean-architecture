@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="fragment_repo_details_avatar_size">60dp</dimen>
+    <string name="fragment_repo_details_see_more">See more on website</string>
+
+</resources>

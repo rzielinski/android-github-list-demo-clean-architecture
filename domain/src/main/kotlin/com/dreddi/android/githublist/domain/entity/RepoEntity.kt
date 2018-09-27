@@ -1,5 +1,7 @@
 package com.dreddi.android.githublist.domain.entity
 
+import java.io.Serializable
+
 data class RepoEntity(
     val id: Long?,
     val name: String?,
@@ -72,4 +74,4 @@ data class RepoEntity(
     val defaultBranch: String?,
     val score: Float?,
     val owner: RepoOwnerEntity
-)
+): Serializable
