@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 import java.io.Serializable
 
-class RepoOwner : Serializable {
+class RepoOwnerData : Serializable {
 
     @SerializedName("id")
     val id: Long = 0

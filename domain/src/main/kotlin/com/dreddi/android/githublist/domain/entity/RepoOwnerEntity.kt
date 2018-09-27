@@ -1,7 +1,7 @@
 package com.dreddi.android.githublist.domain.entity
 
 data class RepoOwnerEntity(
-    val id: Long,
+    val id: Long?,
     val login: String?,
     val nodeId: String?,
     val avatarUrl: String?,
@@ -18,5 +18,5 @@ data class RepoOwnerEntity(
     val eventsUrl: String?,
     val receivedEventsUrl: String?,
     val type: String?,
-    val isSiteAdmin: Boolean
+    val isSiteAdmin: Boolean?
 )

@@ -1,0 +1,86 @@
+package com.dreddi.android.githublist.data.mapper
+
+import com.dreddi.android.githublist.data.entity.RepoData
+import com.dreddi.android.githublist.domain.entity.RepoEntity
+
+class RepoDataToEntityMapper(
+        var repoOwnerDataToEntityMapper: RepoOwnerDataToEntityMapper) {
+
+    fun mapFrom(repoData: RepoData?): RepoEntity {
+        var repoOwner = repoOwnerDataToEntityMapper
+                .mapFrom(repoData?.ownerData)
+        return RepoEntity(
+                repoData?.id,
+                repoData?.name,
+                repoData?.fullName,
+                repoData?.isPrivate,
+                repoData?.htmlUrl,
+                repoData?.description,
+                repoData?.isFork,
+                repoData?.url,
+                repoData?.forksUrl,
+                repoData?.keysUrl,
+                repoData?.collaboratorsUrl,
+                repoData?.teamsUrl,
+                repoData?.hooksUrl,
+                repoData?.issueEventsUrl,
+                repoData?.eventsUrl,
+                repoData?.assigneesUrl,
+                repoData?.branchesUrl,
+                repoData?.tagsUrl,
+                repoData?.blobsUrl,
+                repoData?.gitTagsUrl,
+                repoData?.gitRefsUrl,
+                repoData?.treesUrl,
+                repoData?.statusesUrl,
+                repoData?.languagesUrl,
+                repoData?.stargazersUrl,
+                repoData?.contributorsUrl,
+                repoData?.subscribersUrl,
+                repoData?.subscriptionUrl,
+                repoData?.commitsUrl,
+                repoData?.gitCommitsUrl,
+                repoData?.commentsUrl,
+                repoData?.issueCommentUrl,
+                repoData?.contentsUrl,
+                repoData?.compareUrl,
+                repoData?.mergesUrl,
+                repoData?.archiveUrl,
+                repoData?.downloadsUrl,
+                repoData?.issuesUrl,
+                repoData?.pullsUrl,
+                repoData?.milestonesUrl,
+                repoData?.notificationsUrl,
+                repoData?.labelsUrl,
+                repoData?.releasesUrl,
+                repoData?.deploymentsUrl,
+                repoData?.createdAt,
+                repoData?.updatedAt,
+                repoData?.pushedAt,
+                repoData?.gitUrl,
+                repoData?.sshUrl,
+                repoData?.cloneUrl,
+                repoData?.svnUrl,
+                repoData?.homepage,
+                repoData?.size,
+                repoData?.stargazersCount,
+                repoData?.watchersCount,
+                repoData?.language,
+                repoData?.isHasIssues,
+                repoData?.isHasProjects,
+                repoData?.isHasDownloads,
+                repoData?.isHasWiki,
+                repoData?.isHasPages,
+                repoData?.forksCount,
+                repoData?.mirrorUrl,
+                repoData?.isArchived,
+                repoData?.openIssuesCount,
+                repoData?.forks,
+                repoData?.openIssues,
+                repoData?.watchers,
+                repoData?.defaultBranch,
+                repoData?.score,
+                repoOwner
+        )
+    }
+}
