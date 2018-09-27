@@ -216,6 +216,6 @@ class RepoData : Serializable {
     @SerializedName("score")
     val score: Float = 0.toFloat()
 
-    @SerializedName("owner")
-    val owner: RepoOwner? = null
+    @SerializedName("ownerData")
+    val ownerData: RepoOwnerData? = null
 }
