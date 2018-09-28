@@ -1,5 +1,7 @@
 package com.dreddi.android.githublist.domain.entity
 
+import java.io.Serializable
+
 data class RepoOwnerEntity(
     val id: Long?,
     val login: String?,
@@ -19,4 +21,4 @@ data class RepoOwnerEntity(
     val receivedEventsUrl: String?,
     val type: String?,
     val isSiteAdmin: Boolean?
-)
+): Serializable

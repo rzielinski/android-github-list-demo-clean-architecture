@@ -8,7 +8,7 @@ class RepoDataToEntityMapper(
 
     fun mapFrom(repoData: RepoData?): RepoEntity {
         var repoOwner = repoOwnerDataToEntityMapper
-                .mapFrom(repoData?.ownerData)
+                .mapFrom(repoData?.owner)
         return RepoEntity(
                 repoData?.id,
                 repoData?.name,

@@ -2,9 +2,7 @@ package com.dreddi.android.githublist.data.entity
 
 import com.google.gson.annotations.SerializedName
 
-import java.io.Serializable
-
-class RepoData : Serializable {
+class RepoData {
 
     @SerializedName("id")
     val id: Long? = null
@@ -216,6 +214,6 @@ class RepoData : Serializable {
     @SerializedName("score")
     val score: Float = 0.toFloat()
 
-    @SerializedName("ownerData")
-    val ownerData: RepoOwnerData? = null
+    @SerializedName("owner")
+    val owner: RepoOwnerData? = null
 }

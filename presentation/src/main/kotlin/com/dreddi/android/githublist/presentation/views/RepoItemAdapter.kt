@@ -15,11 +15,8 @@ import java.util.ArrayList
 class RepoItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var isLoading: Boolean = false
-    private val repoItemsList: MutableList<RepoEntity>
+    private var repoItemsList: MutableList<RepoEntity>
     private var onRepoClickListener: OnRepoClickListener? = null
-
-    val all: List<RepoEntity>
-        get() = repoItemsList
 
     init {
         repoItemsList = ArrayList()
@@ -62,7 +59,7 @@ class RepoItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     fun add(repo: RepoEntity?) {
-        if (repo == null) {
+        if ((repo == null) || repoItemsList.contains(repo)) {
             return
         }
         repoItemsList.add(repo)
@@ -76,6 +73,11 @@ class RepoItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         for (repo in repoItemsList) {
             add(repo)
         }
+    }
+
+    fun set(repoItemsList: List<RepoEntity>?) {
+        this.repoItemsList = ArrayList()
+        addAll(repoItemsList)
     }
 
     fun setIsLoading(isLoading: Boolean) {

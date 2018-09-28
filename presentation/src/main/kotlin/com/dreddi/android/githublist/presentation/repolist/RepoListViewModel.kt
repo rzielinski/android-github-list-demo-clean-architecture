@@ -1,6 +1,7 @@
 package com.dreddi.android.githublist.presentation.repolist
 
 import android.arch.lifecycle.MutableLiveData
+import com.dreddi.android.githublist.domain.entity.RepoEntity
 import com.dreddi.android.githublist.domain.entity.RepoListEntity
 import com.dreddi.android.githublist.domain.interactor.GetTopRepositories
 import com.dreddi.android.githublist.presentation.app.BaseViewModel
@@ -10,17 +11,19 @@ import io.reactivex.schedulers.Schedulers
 class RepoListViewModel(
         private var getTopRepositories: GetTopRepositories): BaseViewModel() {
 
-    var page: Int = 0
-    var perPage: Int = 10
     var isLoading: MutableLiveData<Boolean> = MutableLiveData()
-    var repoList: MutableLiveData<RepoListEntity> = MutableLiveData<RepoListEntity>()
+    var repoList: MutableLiveData<MutableList<RepoEntity>> = MutableLiveData()
+
+    private var page: Int = 0
+    private var perPage: Int = 10
 
     init {
         isLoading.value = false
+        repoList.value = mutableListOf<RepoEntity>()
     }
 
     fun isData(): Boolean {
-        return repoList.value != null
+        return repoList.value?.size != 0
     }
 
     fun fetchRepoList() {
@@ -31,12 +34,21 @@ class RepoListViewModel(
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 {
-                                    repoList.value = it
+                                    appendData(it)
                                     isLoading.value = false
+                                    page++
                                 },
                                 {
-
+                                    isLoading.value = false
                                 }
                         ))
+    }
+
+    private fun appendData(repoListEntity: RepoListEntity) {
+        var newRepoList = repoList.value
+        repoListEntity.repoDataItemsList?.forEach {
+            newRepoList?.add(it)
+        }
+        repoList.value = newRepoList
     }
 }

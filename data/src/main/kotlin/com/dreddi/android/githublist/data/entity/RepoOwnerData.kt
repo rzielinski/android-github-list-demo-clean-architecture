@@ -2,9 +2,7 @@ package com.dreddi.android.githublist.data.entity
 
 import com.google.gson.annotations.SerializedName
 
-import java.io.Serializable
-
-class RepoOwnerData : Serializable {
+class RepoOwnerData {
 
     @SerializedName("id")
     val id: Long = 0
