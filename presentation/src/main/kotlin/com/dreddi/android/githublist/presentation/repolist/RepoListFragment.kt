@@ -52,7 +52,7 @@ class RepoListFragment: Fragment(), OnRepoClickListener, OnRepoScrollListener {
     }
 
     override fun isLoading(): Boolean {
-        return false
+        return viewModel?.isLoading?.value == true
     }
 
     override fun loadMoreItems() {
