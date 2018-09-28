@@ -7,21 +7,26 @@ import android.util.AttributeSet
 
 import com.dreddi.android.githublist.domain.entity.RepoEntity
 
-class RepoListRecyclerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) : RecyclerView(context, attrs, defStyle) {
+class RepoListRecyclerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0): RecyclerView(context, attrs, defStyle) {
 
     private var adapter: RepoItemAdapter? = null
     private var layoutManager: LinearLayoutManager? = null
     private var onRepoScrollListener: OnRepoScrollListener? = null
 
-    val items: List<RepoEntity>
-        get() = adapter!!.all
-
     init {
         setView(context)
     }
 
-    fun addItems(repoItemsList: List<RepoEntity>?) {
+    fun add(repoItem: RepoEntity?) {
+        adapter!!.add(repoItem)
+    }
+
+    fun addAll(repoItemsList: List<RepoEntity>?) {
         adapter!!.addAll(repoItemsList)
+    }
+
+    fun set(repoItemsList: List<RepoEntity>?) {
+        adapter!!.set(repoItemsList)
     }
 
     fun setIsLoading(isLoading: Boolean) {

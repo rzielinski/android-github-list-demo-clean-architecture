@@ -1,5 +1,7 @@
 package com.dreddi.android.githublist.presentation.repodetails
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,8 +17,16 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dreddi.android.githublist.R
 import com.dreddi.android.githublist.domain.entity.RepoEntity
+import com.dreddi.android.githublist.presentation.di.components.repodetails.DaggerRepoDetailsComponent
+import com.dreddi.android.githublist.presentation.di.modules.repodetails.RepoDetailsModule
+import javax.inject.Inject
 
 class RepoDetailsFragment : Fragment() {
+
+    @Inject
+    lateinit var repoDetailsViewModelFactory: RepoDetailsViewModelFactory
+
+    private var viewModel: RepoDetailsViewModel? = null
 
     private var repoName: TextView? = null
     private var repoDescr: TextView? = null
@@ -27,10 +37,9 @@ class RepoDetailsFragment : Fragment() {
     private var avatar: ImageView? = null
     private var layoutDetails: LinearLayout? = null
 
-    private var repo: RepoEntity? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        injectDependency()
         readArguments()
     }
 
@@ -38,15 +47,25 @@ class RepoDetailsFragment : Fragment() {
         return getView(inflater, container, savedInstanceState)
     }
 
-    override fun onResume() {
-        super.onResume()
-        updateView()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeViewState()
     }
 
     private fun readArguments() {
         if (arguments != null && arguments!!.containsKey(ARG_REPO)) {
-            repo = arguments!!.getSerializable(ARG_REPO) as RepoEntity
+            var repo = arguments!!.getSerializable(ARG_REPO) as RepoEntity
+            viewModel?.repo?.value = repo
         }
+    }
+
+    private fun injectDependency() {
+        var repoDetailsComponent =  DaggerRepoDetailsComponent.builder()
+                .repoDetailsModule(RepoDetailsModule())
+                .build()
+        repoDetailsComponent.inject(this)
+        viewModel = ViewModelProviders.of(this, repoDetailsViewModelFactory)
+                .get(RepoDetailsViewModel::class.java)
     }
 
     private fun getView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -62,48 +81,47 @@ class RepoDetailsFragment : Fragment() {
         layoutDetails = view.findViewById(R.id.fragment_repo_details_layout)
 
         seeMore = view.findViewById(R.id.fragment_repo_details_see_more)
-        seeMore!!.setOnClickListener { showRepoHome() }
+        seeMore?.setOnClickListener { showRepoHome() }
 
         return view
     }
 
-    private fun updateView() {
+    private fun observeViewState() {
+        viewModel?.repo?.observe(this, Observer {
+            updateView(it)
+        })
+    }
+
+    private fun updateView(repo: RepoEntity?) {
 
         if (repo == null) {
             layoutDetails!!.visibility = View.GONE
             return
         }
 
-        repoName!!.text = repo!!.name
-        repoDescr!!.text = repo!!.description
+        repoName?.text = repo.name
+        repoDescr?.text = repo.description
 
-        repoWatch!!.text = formatCount(repo!!.watchersCount)
-        repoStars!!.text = formatCount(repo!!.stargazersCount)
-        repoFork!!.text = formatCount(repo!!.forksCount)
+        repoWatch?.text = formatCount(repo.watchersCount)
+        repoStars?.text = formatCount(repo.stargazersCount)
+        repoFork?.text = formatCount(repo.forksCount)
 
-        if (repo!!.owner != null) {
-            Glide.with(this)
-                    .applyDefaultRequestOptions(RequestOptions()
-                            .error(R.drawable.ic_person))
-                    .load(repo!!.owner.avatarUrl)
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(avatar!!)
-        } else {
-            Glide.with(this)
-                    .load(R.drawable.ic_person)
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(avatar!!)
-        }
+        Glide.with(this)
+                .applyDefaultRequestOptions(RequestOptions()
+                        .error(R.drawable.ic_person))
+                .load(repo.owner.avatarUrl)
+                .apply(RequestOptions.circleCropTransform())
+                .into(avatar!!)
 
-        layoutDetails!!.visibility = View.VISIBLE
+        layoutDetails?.visibility = View.VISIBLE
     }
 
     private fun showRepoHome() {
-        if (repo == null) {
+        if (viewModel?.repo?.value == null) {
             return
         }
         startActivity(Intent(Intent.ACTION_VIEW,
-                Uri.parse(repo!!.htmlUrl)))
+                Uri.parse(viewModel?.repo?.value!!.htmlUrl)))
     }
 
     fun formatCount(count: Long?): String {

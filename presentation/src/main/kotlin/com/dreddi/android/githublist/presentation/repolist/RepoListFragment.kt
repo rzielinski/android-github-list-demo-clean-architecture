@@ -8,20 +8,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.dreddi.android.githublist.R
-import com.dreddi.android.githublist.data.network.GitHubApi
-import com.dreddi.android.githublist.data.mapper.RepoDataToEntityMapper
-import com.dreddi.android.githublist.data.mapper.RepoListDataToEntityMapper
-import com.dreddi.android.githublist.data.mapper.RepoOwnerDataToEntityMapper
-import com.dreddi.android.githublist.data.repository.RepoRepositoryImpl
-import com.dreddi.android.githublist.data.repository.store.CloudRepoStore
 import com.dreddi.android.githublist.domain.entity.RepoEntity
-import com.dreddi.android.githublist.domain.interactor.GetTopRepositories
-import com.dreddi.android.githublist.presentation.di.ApiClient
+import com.dreddi.android.githublist.presentation.app.Navigator
+import com.dreddi.android.githublist.presentation.di.components.repolist.DaggerRepoListComponent
+import com.dreddi.android.githublist.presentation.di.modules.repolist.RepoListModule
+import com.dreddi.android.githublist.presentation.repodetails.RepoDetailsFragment
 import com.dreddi.android.githublist.presentation.views.OnRepoClickListener
 import com.dreddi.android.githublist.presentation.views.OnRepoScrollListener
 import com.dreddi.android.githublist.presentation.views.RepoListRecyclerView
+import javax.inject.Inject
 
 class RepoListFragment: Fragment(), OnRepoClickListener, OnRepoScrollListener {
+
+    @Inject
+    lateinit var repoListViewModelFactory: RepoListViewModelFactory
 
     private var viewModel: RepoListViewModel? = null
     private var repoListRecyclerView: RepoListRecyclerView? = null
@@ -44,6 +44,7 @@ class RepoListFragment: Fragment(), OnRepoClickListener, OnRepoScrollListener {
     }
 
     override fun onRepoClicked(repo: RepoEntity) {
+        showRepoDetails(repo)
     }
 
     override fun isLastPage(): Boolean {
@@ -55,18 +56,15 @@ class RepoListFragment: Fragment(), OnRepoClickListener, OnRepoScrollListener {
     }
 
     override fun loadMoreItems() {
+        viewModel?.fetchRepoList()
     }
 
     private fun injectDependency() {
-        val retrofit = ApiClient.getClient()
-        var api = retrofit.create(GitHubApi::class.java);
-        var repoStore = CloudRepoStore(api)
-        var factory = RepoListViewModelFactory(
-                GetTopRepositories(
-                        RepoRepositoryImpl(repoStore,
-                                RepoListDataToEntityMapper(RepoDataToEntityMapper(RepoOwnerDataToEntityMapper())))
-                ))
-        viewModel = ViewModelProviders.of(this, factory)
+        var repoListComponent =  DaggerRepoListComponent.builder()
+                .repoListModule(RepoListModule())
+                .build()
+        repoListComponent.inject(this)
+        viewModel = ViewModelProviders.of(this, repoListViewModelFactory)
                 .get(RepoListViewModel::class.java)
     }
 
@@ -83,8 +81,16 @@ class RepoListFragment: Fragment(), OnRepoClickListener, OnRepoScrollListener {
             repoListRecyclerView?.setIsLoading(it ?: false)
         })
         viewModel?.repoList?.observe(this, Observer {
-            repoListRecyclerView?.addItems(it?.repoDataItemsList)
+            repoListRecyclerView?.addAll(it)
         })
+    }
+
+    private fun showRepoDetails(repo: RepoEntity) {
+        if (activity is Navigator) {
+            var navigator = activity as Navigator
+            navigator.replaceFragment(
+                    RepoDetailsFragment.newInstance(repo), true)
+        }
     }
 
     companion object {
