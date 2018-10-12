@@ -27,11 +27,13 @@ class RepoListViewModel(
     }
 
     fun fetchRepoList() {
-        isLoading.value = true
         addDisposable(
                 getTopRepositories.getTopRepositories(page, perPage)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
+                        .doOnSubscribe {
+                            isLoading.value = true
+                        }
                         .subscribe(
                                 {
                                     appendData(it)
