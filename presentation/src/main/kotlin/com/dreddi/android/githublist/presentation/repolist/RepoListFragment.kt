@@ -15,16 +15,15 @@ import com.dreddi.android.githublist.presentation.di.modules.repolist.RepoListMo
 import com.dreddi.android.githublist.presentation.repodetails.RepoDetailsFragment
 import com.dreddi.android.githublist.presentation.views.OnRepoClickListener
 import com.dreddi.android.githublist.presentation.views.OnRepoScrollListener
-import com.dreddi.android.githublist.presentation.views.RepoListRecyclerView
+import kotlinx.android.synthetic.main.fragment_repo_list.*
 import javax.inject.Inject
 
-class RepoListFragment: Fragment(), OnRepoClickListener, OnRepoScrollListener {
+class RepoListFragment : Fragment(), OnRepoClickListener, OnRepoScrollListener {
 
     @Inject
     lateinit var repoListViewModelFactory: RepoListViewModelFactory
 
     private var viewModel: RepoListViewModel? = null
-    private var repoListRecyclerView: RepoListRecyclerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,35 +31,29 @@ class RepoListFragment: Fragment(), OnRepoClickListener, OnRepoScrollListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return getView(inflater, container, savedInstanceState)
+        return inflater.inflate(R.layout.fragment_repo_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setView()
         observeViewState()
-        if (viewModel?.isData() == false) {
-            viewModel?.fetchRepoList()
-        }
     }
 
     override fun onRepoClicked(repo: RepoEntity) {
         showRepoDetails(repo)
     }
 
-    override fun isLastPage(): Boolean {
-        return false
-    }
+    override fun isLastPage(): Boolean = false
 
-    override fun isLoading(): Boolean {
-        return viewModel?.isLoading?.value == true
-    }
+    override fun isLoading(): Boolean = viewModel?.isLoading() == true
 
     override fun loadMoreItems() {
         viewModel?.fetchRepoList()
     }
 
     private fun injectDependency() {
-        var repoListComponent =  DaggerRepoListComponent.builder()
+        val repoListComponent = DaggerRepoListComponent.builder()
                 .repoListModule(RepoListModule())
                 .build()
         repoListComponent.inject(this)
@@ -68,32 +61,35 @@ class RepoListFragment: Fragment(), OnRepoClickListener, OnRepoScrollListener {
                 .get(RepoListViewModel::class.java)
     }
 
-    private fun getView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val view = inflater.inflate(R.layout.fragment_repo_list, container, false)
-        repoListRecyclerView = view.findViewById<RepoListRecyclerView>(R.id.fragment_repo_list)
-        repoListRecyclerView?.setOnRepoClickListener(this)
-        repoListRecyclerView?.setOnRepoScrollListener(this)
-        return view
+    private fun setView() {
+        with(repoListRecyclerView) {
+            setOnRepoClickListener(this@RepoListFragment)
+            setOnRepoScrollListener(this@RepoListFragment)
+        }
     }
 
     private fun observeViewState() {
-        viewModel?.isLoading?.observe(this, Observer {
+        viewModel?.getIsLoadingLiveData()?.observe(this, Observer {
             repoListRecyclerView?.setIsLoading(it ?: false)
         })
-        viewModel?.repoList?.observe(this, Observer {
+        viewModel?.getRepoListLiveData()?.observe(this, Observer {
             repoListRecyclerView?.addAll(it)
         })
+        if (viewModel?.isData() == false) {
+            viewModel?.fetchRepoList()
+        }
     }
 
     private fun showRepoDetails(repo: RepoEntity) {
         if (activity is Navigator) {
-            var navigator = activity as Navigator
+            val navigator = activity as Navigator
             navigator.replaceFragment(
                     RepoDetailsFragment.newInstance(repo), true)
         }
     }
 
     companion object {
+
         fun newInstance(): RepoListFragment {
             return RepoListFragment()
         }

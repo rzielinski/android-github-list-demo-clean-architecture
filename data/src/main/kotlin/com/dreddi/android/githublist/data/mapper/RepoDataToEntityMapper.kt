@@ -4,11 +4,11 @@ import com.dreddi.android.githublist.data.entity.RepoData
 import com.dreddi.android.githublist.domain.entity.RepoEntity
 
 class RepoDataToEntityMapper(
-        var repoOwnerDataToEntityMapper: RepoOwnerDataToEntityMapper) {
+        private val repoOwnerDataToEntityMapper: RepoOwnerDataToEntityMapper
+) {
 
     fun mapFrom(repoData: RepoData?): RepoEntity {
-        var repoOwner = repoOwnerDataToEntityMapper
-                .mapFrom(repoData?.owner)
+        val repoOwner = repoOwnerDataToEntityMapper.mapFrom(repoData?.owner)
         return RepoEntity(
                 repoData?.id,
                 repoData?.name,

@@ -9,9 +9,6 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -19,6 +16,10 @@ import com.dreddi.android.githublist.R
 import com.dreddi.android.githublist.domain.entity.RepoEntity
 import com.dreddi.android.githublist.presentation.di.components.repodetails.DaggerRepoDetailsComponent
 import com.dreddi.android.githublist.presentation.di.modules.repodetails.RepoDetailsModule
+import com.dreddi.android.githublist.presentation.extension.formatCount
+import com.dreddi.android.githublist.presentation.extension.gone
+import com.dreddi.android.githublist.presentation.extension.show
+import kotlinx.android.synthetic.main.fragment_repo_details.*
 import javax.inject.Inject
 
 class RepoDetailsFragment : Fragment() {
@@ -28,15 +29,6 @@ class RepoDetailsFragment : Fragment() {
 
     private var viewModel: RepoDetailsViewModel? = null
 
-    private var repoName: TextView? = null
-    private var repoDescr: TextView? = null
-    private var repoWatch: TextView? = null
-    private var repoStars: TextView? = null
-    private var repoFork: TextView? = null
-    private var seeMore: TextView? = null
-    private var avatar: ImageView? = null
-    private var layoutDetails: LinearLayout? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependency()
@@ -44,7 +36,7 @@ class RepoDetailsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return getView(inflater, container, savedInstanceState)
+        return inflater.inflate(R.layout.fragment_repo_details, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,14 +45,13 @@ class RepoDetailsFragment : Fragment() {
     }
 
     private fun readArguments() {
-        if (arguments != null && arguments!!.containsKey(ARG_REPO)) {
-            var repo = arguments!!.getSerializable(ARG_REPO) as RepoEntity
-            viewModel?.repo?.value = repo
+        arguments?.takeIf { it.containsKey(ARG_REPO) }?.let { arguments ->
+            viewModel?.setRepo(arguments.getSerializable(ARG_REPO) as RepoEntity)
         }
     }
 
     private fun injectDependency() {
-        var repoDetailsComponent =  DaggerRepoDetailsComponent.builder()
+        val repoDetailsComponent = DaggerRepoDetailsComponent.builder()
                 .repoDetailsModule(RepoDetailsModule())
                 .build()
         repoDetailsComponent.inject(this)
@@ -68,86 +59,60 @@ class RepoDetailsFragment : Fragment() {
                 .get(RepoDetailsViewModel::class.java)
     }
 
-    private fun getView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-
-        val view = inflater.inflate(R.layout.fragment_repo_details, container, false)
-
-        avatar = view.findViewById(R.id.fragment_repo_details_avatar)
-        repoName = view.findViewById(R.id.fragment_repo_details_name)
-        repoDescr = view.findViewById(R.id.fragment_repo_details_descr)
-        repoWatch = view.findViewById(R.id.fragment_repo_details_watch)
-        repoStars = view.findViewById(R.id.fragment_repo_details_stars)
-        repoFork = view.findViewById(R.id.fragment_repo_details_fork)
-        layoutDetails = view.findViewById(R.id.fragment_repo_details_layout)
-
-        seeMore = view.findViewById(R.id.fragment_repo_details_see_more)
-        seeMore?.setOnClickListener { showRepoHome() }
-
-        return view
-    }
-
     private fun observeViewState() {
-        viewModel?.repo?.observe(this, Observer {
+        viewModel?.getRepoLiveData()?.observe(this, Observer {
             updateView(it)
         })
     }
 
     private fun updateView(repo: RepoEntity?) {
 
-        if (repo == null) {
-            layoutDetails!!.visibility = View.GONE
-            return
+        if (repo != null) {
+
+            Glide.with(this)
+                    .applyDefaultRequestOptions(RequestOptions()
+                            .error(R.drawable.ic_person))
+                    .load(repo.owner.avatarUrl)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(repoDetailsAvatar)
+
+            repoDetailsName.text = repo.name
+            repoDetailsDesc.text = repo.description
+            repoDetailsWatch.text = repo.watchersCount.formatCount(resources)
+            repoDetailsStars.text = repo.stargazersCount.formatCount(resources)
+            repoDetailsFork.text = repo.forksCount.formatCount(resources)
+
+            repoDetailsSeeMore.setOnClickListener {
+                showRepoHome()
+            }
+
+            repoDetailsLayout.show()
+
+        } else {
+
+            repoDetailsLayout.gone()
         }
-
-        repoName?.text = repo.name
-        repoDescr?.text = repo.description
-
-        repoWatch?.text = formatCount(repo.watchersCount)
-        repoStars?.text = formatCount(repo.stargazersCount)
-        repoFork?.text = formatCount(repo.forksCount)
-
-        Glide.with(this)
-                .applyDefaultRequestOptions(RequestOptions()
-                        .error(R.drawable.ic_person))
-                .load(repo.owner.avatarUrl)
-                .apply(RequestOptions.circleCropTransform())
-                .into(avatar!!)
-
-        layoutDetails?.visibility = View.VISIBLE
     }
 
     private fun showRepoHome() {
-        if (viewModel?.repo?.value == null) {
-            return
-        }
-        startActivity(Intent(Intent.ACTION_VIEW,
-                Uri.parse(viewModel?.repo?.value!!.htmlUrl)))
-    }
-
-    fun formatCount(count: Long?): String {
-        if (count == null) {
-            return ""
-        }
-        if (count >= 1000) {
-            val countK = (count / 1000).toInt()
-            return activity?.getString(R.string.format_count_k, countK) ?: ""
-        } else {
-            return count.toString()
+        viewModel?.getRepo()?.let { repo ->
+            startActivity(Intent(Intent.ACTION_VIEW,
+                    Uri.parse(repo.htmlUrl)))
         }
     }
 
     companion object {
 
-        private val ARG_REPO = "repo"
+        private const val ARG_REPO = "repo"
 
         fun newInstance(repo: RepoEntity? = null): RepoDetailsFragment {
-            val fragment = RepoDetailsFragment()
-            val params = Bundle()
-            if (repo != null) {
-                params.putSerializable(ARG_REPO, repo)
+            return RepoDetailsFragment().apply {
+                repo?.let {
+                    arguments = Bundle().apply {
+                        putSerializable(ARG_REPO, repo)
+                    }
+                }
             }
-            fragment.arguments = params
-            return fragment
         }
     }
 }

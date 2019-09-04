@@ -9,8 +9,8 @@ interface Navigator {
     fun getNavigatorFragmentContainer(): Int
 
     fun replaceFragment(fragment: Fragment, addToBackStack: Boolean) {
-        var fm = getNavigatorFragmentManager()
-        var container = getNavigatorFragmentContainer()
+        val fm = getNavigatorFragmentManager()
+        val container = getNavigatorFragmentContainer()
         if (addToBackStack) {
             fm.beginTransaction()
                     .replace(container, fragment, fragment.javaClass.name)
@@ -23,9 +23,8 @@ interface Navigator {
         }
     }
 
-    fun replaceFragmentOnce(fragment: Fragment, addToBackStack: Boolean) {
-        var fm = getNavigatorFragmentManager()
-        if (fm.findFragmentByTag(fragment.javaClass.name) == null) {
+    fun replaceFragmentExclusive(fragment: Fragment, addToBackStack: Boolean) {
+        if (getNavigatorFragmentManager().findFragmentByTag(fragment.javaClass.name) == null) {
             replaceFragment(fragment, addToBackStack)
         }
     }

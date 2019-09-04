@@ -9,32 +9,28 @@ import com.dreddi.android.githublist.domain.entity.RepoEntity
 
 class RepoListRecyclerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0): RecyclerView(context, attrs, defStyle) {
 
-    private var adapter: RepoItemAdapter? = null
-    private var layoutManager: LinearLayoutManager? = null
+    private lateinit var adapter: RepoItemAdapter
+    private lateinit var layoutManager: LinearLayoutManager
     private var onRepoScrollListener: OnRepoScrollListener? = null
 
     init {
         setView(context)
     }
 
-    fun add(repoItem: RepoEntity?) {
-        adapter!!.add(repoItem)
-    }
-
     fun addAll(repoItemsList: List<RepoEntity>?) {
-        adapter!!.addAll(repoItemsList)
+        adapter.addAll(repoItemsList)
     }
 
     fun set(repoItemsList: List<RepoEntity>?) {
-        adapter!!.set(repoItemsList)
+        adapter.set(repoItemsList)
     }
 
     fun setIsLoading(isLoading: Boolean) {
-        adapter!!.setIsLoading(isLoading)
+        adapter.setIsLoading(isLoading)
     }
 
     fun setOnRepoClickListener(onRepoClickListener: OnRepoClickListener) {
-        adapter!!.setOnRepoClickListener(onRepoClickListener)
+        adapter.setOnRepoClickListener(onRepoClickListener)
     }
 
     fun setOnRepoScrollListener(onRepoScrollListener: OnRepoScrollListener) {
@@ -43,27 +39,29 @@ class RepoListRecyclerView @JvmOverloads constructor(context: Context, attrs: At
 
     private fun setView(context: Context) {
 
-        layoutManager = LinearLayoutManager(context)
-        setLayoutManager(layoutManager)
+        layoutManager = LinearLayoutManager(context).also {
+            setLayoutManager(it)
+        }
 
-        adapter = RepoItemAdapter()
-        setAdapter(adapter)
+        adapter = RepoItemAdapter().also {
+            setAdapter(it)
+        }
 
         addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                if (onRepoScrollListener == null) {
-                    return
-                }
+                onRepoScrollListener?.let { listener ->
 
-                val visibleItemCount = layoutManager!!.childCount
-                val totalItemCount = layoutManager!!.itemCount
-                val firstVisibleItemPosition = layoutManager!!.findFirstVisibleItemPosition()
+                    if (!listener.isLoading() && !listener.isLastPage()) {
 
-                if (!onRepoScrollListener!!.isLoading() && !onRepoScrollListener!!.isLastPage()) {
-                    if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
-                        onRepoScrollListener!!.loadMoreItems()
+                        val visibleItemCount = layoutManager.childCount
+                        val totalItemCount = layoutManager.itemCount
+                        val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+                        if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
+                            listener.loadMoreItems()
+                        }
                     }
                 }
             }

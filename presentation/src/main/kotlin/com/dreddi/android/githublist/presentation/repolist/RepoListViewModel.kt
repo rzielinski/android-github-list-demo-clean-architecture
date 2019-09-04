@@ -1,5 +1,6 @@
 package com.dreddi.android.githublist.presentation.repolist
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import com.dreddi.android.githublist.domain.entity.RepoEntity
 import com.dreddi.android.githublist.domain.entity.RepoListEntity
@@ -9,22 +10,29 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class RepoListViewModel(
-        private var getTopRepositories: GetTopRepositories): BaseViewModel() {
+        private val getTopRepositories: GetTopRepositories
+) : BaseViewModel() {
 
-    var isLoading: MutableLiveData<Boolean> = MutableLiveData()
-    var repoList: MutableLiveData<MutableList<RepoEntity>> = MutableLiveData()
+    private val isLoading: MutableLiveData<Boolean> =
+            MutableLiveData<Boolean>().apply {
+                value = false
+            }
 
-    private var page: Int = 0
+    private val repoList: MutableLiveData<MutableList<RepoEntity>> =
+            MutableLiveData<MutableList<RepoEntity>>().apply {
+                value = mutableListOf()
+            }
+
+    private var page: Int = 1
     private var perPage: Int = 10
 
-    init {
-        isLoading.value = false
-        repoList.value = mutableListOf<RepoEntity>()
-    }
+    fun isData() = repoList.value?.size != 0
 
-    fun isData(): Boolean {
-        return repoList.value?.size != 0
-    }
+    fun isLoading() = isLoading.value == true
+
+    fun getIsLoadingLiveData() = isLoading as LiveData<Boolean>
+
+    fun getRepoListLiveData() = repoList as LiveData<MutableList<RepoEntity>>
 
     fun fetchRepoList() {
         addDisposable(
@@ -34,22 +42,19 @@ class RepoListViewModel(
                         .doOnSubscribe {
                             isLoading.value = true
                         }
-                        .subscribe(
-                                {
-                                    appendData(it)
-                                    isLoading.value = false
-                                    page++
-                                },
-                                {
-                                    isLoading.value = false
-                                }
-                        ))
+                        .subscribe({
+                            appendData(it)
+                            isLoading.value = false
+                            page++
+                        }, {
+                            isLoading.value = false
+                        }))
     }
 
     private fun appendData(repoListEntity: RepoListEntity) {
-        var newRepoList = repoList.value
-        repoListEntity.repoDataItemsList?.forEach {
-            newRepoList?.add(it)
+        val newRepoList = repoList.value
+        repoListEntity.repoDataItemsList?.forEach { repo ->
+            newRepoList?.add(repo)
         }
         repoList.value = newRepoList
     }

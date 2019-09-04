@@ -4,10 +4,11 @@ import com.dreddi.android.githublist.data.entity.RepoListData
 import com.dreddi.android.githublist.domain.entity.RepoListEntity
 
 class RepoListDataToEntityMapper(
-        var repoDataToEntityMapper: RepoDataToEntityMapper) {
+        private val repoDataToEntityMapper: RepoDataToEntityMapper
+) {
 
     fun mapFrom(repoListData: RepoListData): RepoListEntity {
-        var repoList = repoListData.repoDataItemsList?.map {
+        val repoList = repoListData.repoDataItemsList?.map {
             repoDataToEntityMapper.mapFrom(it)
         }
         return RepoListEntity(

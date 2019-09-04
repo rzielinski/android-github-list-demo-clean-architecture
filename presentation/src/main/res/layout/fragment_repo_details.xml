@@ -6,13 +6,13 @@
     android:padding="@dimen/margin_normal">
 
     <LinearLayout
-        android:id="@+id/fragment_repo_details_layout"
+        android:id="@+id/repoDetailsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/fragment_repo_details_avatar"
+            android:id="@+id/repoDetailsAvatar"
             android:layout_width="@dimen/fragment_repo_details_avatar_size"
             android:layout_height="@dimen/fragment_repo_details_avatar_size"
             android:layout_gravity="center"
@@ -20,7 +20,7 @@
             android:src="@drawable/ic_person" />
 
         <TextView
-            android:id="@+id/fragment_repo_details_name"
+            android:id="@+id/repoDetailsName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -32,7 +32,7 @@
             tools:text="Android repo" />
 
         <TextView
-            android:id="@+id/fragment_repo_details_descr"
+            android:id="@+id/repoDetailsDesc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -49,7 +49,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/fragment_repo_details_watch"
+                android:id="@+id/repoDetailsWatch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_normal"
@@ -59,7 +59,7 @@
                 tools:text="200" />
 
             <TextView
-                android:id="@+id/fragment_repo_details_stars"
+                android:id="@+id/repoDetailsStars"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_normal"
@@ -69,7 +69,7 @@
                 tools:text="150" />
 
             <TextView
-                android:id="@+id/fragment_repo_details_fork"
+                android:id="@+id/repoDetailsFork"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_normal"
@@ -81,7 +81,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/fragment_repo_details_see_more"
+            android:id="@+id/repoDetailsSeeMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
