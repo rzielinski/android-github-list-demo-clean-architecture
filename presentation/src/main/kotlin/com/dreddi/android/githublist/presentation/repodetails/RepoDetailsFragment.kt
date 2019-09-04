@@ -9,9 +9,6 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -22,6 +19,7 @@ import com.dreddi.android.githublist.presentation.di.modules.repodetails.RepoDet
 import com.dreddi.android.githublist.presentation.extension.formatCount
 import com.dreddi.android.githublist.presentation.extension.gone
 import com.dreddi.android.githublist.presentation.extension.show
+import kotlinx.android.synthetic.main.fragment_repo_details.*
 import javax.inject.Inject
 
 class RepoDetailsFragment : Fragment() {
@@ -31,15 +29,6 @@ class RepoDetailsFragment : Fragment() {
 
     private var viewModel: RepoDetailsViewModel? = null
 
-    private var repoName: TextView? = null
-    private var repoDescr: TextView? = null
-    private var repoWatch: TextView? = null
-    private var repoStars: TextView? = null
-    private var repoFork: TextView? = null
-    private var seeMore: TextView? = null
-    private var avatar: ImageView? = null
-    private var layoutDetails: LinearLayout? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injectDependency()
@@ -47,7 +36,7 @@ class RepoDetailsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return getView(inflater, container)
+        return inflater.inflate(R.layout.fragment_repo_details, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,24 +59,6 @@ class RepoDetailsFragment : Fragment() {
                 .get(RepoDetailsViewModel::class.java)
     }
 
-    private fun getView(inflater: LayoutInflater, container: ViewGroup?): View {
-
-        val view = inflater.inflate(R.layout.fragment_repo_details, container, false)
-
-        avatar = view.findViewById(R.id.fragment_repo_details_avatar)
-        repoName = view.findViewById(R.id.fragment_repo_details_name)
-        repoDescr = view.findViewById(R.id.fragment_repo_details_descr)
-        repoWatch = view.findViewById(R.id.fragment_repo_details_watch)
-        repoStars = view.findViewById(R.id.fragment_repo_details_stars)
-        repoFork = view.findViewById(R.id.fragment_repo_details_fork)
-        layoutDetails = view.findViewById(R.id.fragment_repo_details_layout)
-
-        seeMore = view.findViewById(R.id.fragment_repo_details_see_more)
-        seeMore?.setOnClickListener { showRepoHome() }
-
-        return view
-    }
-
     private fun observeViewState() {
         viewModel?.getRepoLiveData()?.observe(this, Observer {
             updateView(it)
@@ -98,25 +69,28 @@ class RepoDetailsFragment : Fragment() {
 
         if (repo != null) {
 
-            repoName?.text = repo.name
-            repoDescr?.text = repo.description
-
-            repoWatch?.text = repo.watchersCount.formatCount(resources)
-            repoStars?.text = repo.stargazersCount.formatCount(resources)
-            repoFork?.text = repo.forksCount.formatCount(resources)
-
             Glide.with(this)
                     .applyDefaultRequestOptions(RequestOptions()
                             .error(R.drawable.ic_person))
                     .load(repo.owner.avatarUrl)
                     .apply(RequestOptions.circleCropTransform())
-                    .into(avatar!!)
+                    .into(repoDetailsAvatar)
 
-            layoutDetails?.show()
+            repoDetailsName.text = repo.name
+            repoDetailsDesc.text = repo.description
+            repoDetailsWatch.text = repo.watchersCount.formatCount(resources)
+            repoDetailsStars.text = repo.stargazersCount.formatCount(resources)
+            repoDetailsFork.text = repo.forksCount.formatCount(resources)
+
+            repoDetailsSeeMore.setOnClickListener {
+                showRepoHome()
+            }
+
+            repoDetailsLayout.show()
 
         } else {
 
-            layoutDetails?.gone()
+            repoDetailsLayout.gone()
         }
     }
 

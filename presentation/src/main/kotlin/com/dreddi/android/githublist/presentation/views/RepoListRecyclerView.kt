@@ -60,7 +60,7 @@ class RepoListRecyclerView @JvmOverloads constructor(context: Context, attrs: At
                         val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
                         if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
-                            onRepoScrollListener?.loadMoreItems()
+                            listener.loadMoreItems()
                         }
                     }
                 }

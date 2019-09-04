@@ -4,12 +4,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
 
 import com.dreddi.android.githublist.R
 import com.dreddi.android.githublist.domain.entity.RepoEntity
 import com.dreddi.android.githublist.presentation.extension.formatCount
+import kotlinx.android.synthetic.main.view_repo_list_item.view.*
 
 import java.util.ArrayList
 
@@ -81,19 +80,12 @@ class RepoItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private inner class RepoItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val repoName = view.findViewById<TextView>(R.id.view_repo_list_item_name)
-        private val repoDesc = view.findViewById<TextView>(R.id.view_repo_list_item_descr)
-        private val repoStars = view.findViewById<TextView>(R.id.view_repo_list_item_stars)
-        private val layout = view.findViewById<LinearLayout>(R.id.view_repo_list_item_layout)
-
         fun bind(repo: RepoEntity?) {
-
-            repo?.let { repo ->
-                repoName.text = repo.name
-                repoDesc.text = repo.description
-                repoStars.text = repo.stargazersCount.formatCount(itemView.resources)
-
-                layout.setOnClickListener {
+            repo?.run {
+                itemView.repoListItemStars.text = stargazersCount.formatCount(itemView.resources)
+                itemView.repoListItemName.text = name
+                itemView.repoListItemDesc.text = description
+                itemView.repoListItemLayout.setOnClickListener {
                     onRepoClickListener?.onRepoClicked(repo)
                 }
             }
