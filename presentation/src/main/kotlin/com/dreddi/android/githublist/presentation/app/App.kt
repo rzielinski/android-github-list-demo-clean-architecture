@@ -5,19 +5,19 @@ import com.dreddi.android.githublist.presentation.di.components.ApplicationCompo
 import com.dreddi.android.githublist.presentation.di.components.DaggerApplicationComponent
 import com.dreddi.android.githublist.presentation.di.modules.ApplicationModule
 
-class App: Application() {
+class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
         applicationComponent = buildAppComponent()
     }
 
-    fun buildAppComponent(): ApplicationComponent {
+    private fun buildAppComponent(): ApplicationComponent {
         return DaggerApplicationComponent.builder()
                 .applicationModule(ApplicationModule(this))
                 .build()
     }
-    
+
     companion object {
         lateinit var applicationComponent: ApplicationComponent
     }

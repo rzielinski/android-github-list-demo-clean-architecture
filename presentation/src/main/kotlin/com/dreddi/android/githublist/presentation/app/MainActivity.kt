@@ -10,8 +10,6 @@ import com.dreddi.android.githublist.presentation.repolist.RepoListFragment
 
 class MainActivity : AppCompatActivity(), Navigator {
 
-    private var toolbar: Toolbar? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setView()
@@ -27,8 +25,9 @@ class MainActivity : AppCompatActivity(), Navigator {
 
     private fun setView() {
         setContentView(R.layout.activity_main)
-        toolbar = findViewById(R.id.activity_main_toolbar)
-        setSupportActionBar(toolbar)
-        replaceFragmentOnce(RepoListFragment.newInstance(), false)
+        findViewById<Toolbar>(R.id.activity_main_toolbar)?.let {
+            setSupportActionBar(it)
+        }
+        replaceFragmentExclusive(RepoListFragment.newInstance(), false)
     }
 }

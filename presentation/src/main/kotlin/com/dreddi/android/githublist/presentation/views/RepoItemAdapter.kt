@@ -9,18 +9,15 @@ import android.widget.TextView
 
 import com.dreddi.android.githublist.R
 import com.dreddi.android.githublist.domain.entity.RepoEntity
+import com.dreddi.android.githublist.presentation.extension.formatCount
 
 import java.util.ArrayList
 
 class RepoItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var isLoading: Boolean = false
-    private var repoItemsList: MutableList<RepoEntity>
+    private var repoItemsList: MutableList<RepoEntity> = mutableListOf()
     private var onRepoClickListener: OnRepoClickListener? = null
-
-    init {
-        repoItemsList = ArrayList()
-    }
 
     fun setOnRepoClickListener(onRepoClickListener: OnRepoClickListener) {
         this.onRepoClickListener = onRepoClickListener
@@ -28,18 +25,15 @@ class RepoItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
-        var viewHolder: RecyclerView.ViewHolder? = null
         val inflater = LayoutInflater.from(parent.context)
 
-        if (viewType == TYPE_ITEM) {
+        return if (viewType == TYPE_ITEM) {
             val view = inflater.inflate(R.layout.view_repo_list_item, parent, false)
-            viewHolder = RepoItemViewHolder(view)
+            RepoItemViewHolder(view)
         } else {
             val view = inflater.inflate(R.layout.view_repo_list_loading, parent, false)
-            viewHolder = RepoItemLoadingViewHolder(view)
+            RepoItemLoadingViewHolder(view)
         }
-
-        return viewHolder
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -87,44 +81,21 @@ class RepoItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private inner class RepoItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val repoName: TextView
-        private val repoDescr: TextView
-        private val repoStars: TextView
-        private val layout: LinearLayout
-
-        init {
-            repoName = view.findViewById(R.id.view_repo_list_item_name)
-            repoDescr = view.findViewById(R.id.view_repo_list_item_descr)
-            repoStars = view.findViewById(R.id.view_repo_list_item_stars)
-            layout = view.findViewById(R.id.view_repo_list_item_layout)
-        }
+        private val repoName = view.findViewById<TextView>(R.id.view_repo_list_item_name)
+        private val repoDesc = view.findViewById<TextView>(R.id.view_repo_list_item_descr)
+        private val repoStars = view.findViewById<TextView>(R.id.view_repo_list_item_stars)
+        private val layout = view.findViewById<LinearLayout>(R.id.view_repo_list_item_layout)
 
         fun bind(repo: RepoEntity?) {
 
-            if (repo == null) {
-                return
-            }
+            repo?.let { repo ->
+                repoName.text = repo.name
+                repoDesc.text = repo.description
+                repoStars.text = repo.stargazersCount.formatCount(itemView.resources)
 
-            repoName.text = repo.name
-            repoDescr.text = repo.description
-            repoStars.text = formatCount(repo.stargazersCount ?: 0)
-
-            layout.setOnClickListener {
-                if (onRepoClickListener != null) {
-                    onRepoClickListener!!.onRepoClicked(repo)
+                layout.setOnClickListener {
+                    onRepoClickListener?.onRepoClicked(repo)
                 }
-            }
-        }
-
-        fun formatCount(count: Long?): String {
-            if (count == null) {
-                return ""
-            }
-            if (count >= 1000) {
-                val countK = (count / 1000).toInt()
-                return itemView.context?.getString(R.string.format_count_k, countK) ?: ""
-            } else {
-                return count.toString()
             }
         }
     }
@@ -133,7 +104,7 @@ class RepoItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 
-        private val TYPE_ITEM = 0
-        private val TYPE_LOADING = 1
+        private const val TYPE_ITEM = 0
+        private const val TYPE_LOADING = 1
     }
 }

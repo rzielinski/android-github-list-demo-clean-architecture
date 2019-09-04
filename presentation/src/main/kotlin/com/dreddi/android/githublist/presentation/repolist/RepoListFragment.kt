@@ -18,7 +18,7 @@ import com.dreddi.android.githublist.presentation.views.OnRepoScrollListener
 import com.dreddi.android.githublist.presentation.views.RepoListRecyclerView
 import javax.inject.Inject
 
-class RepoListFragment: Fragment(), OnRepoClickListener, OnRepoScrollListener {
+class RepoListFragment : Fragment(), OnRepoClickListener, OnRepoScrollListener {
 
     @Inject
     lateinit var repoListViewModelFactory: RepoListViewModelFactory
@@ -47,20 +47,16 @@ class RepoListFragment: Fragment(), OnRepoClickListener, OnRepoScrollListener {
         showRepoDetails(repo)
     }
 
-    override fun isLastPage(): Boolean {
-        return false
-    }
+    override fun isLastPage(): Boolean = false
 
-    override fun isLoading(): Boolean {
-        return viewModel?.isLoading?.value == true
-    }
+    override fun isLoading(): Boolean = viewModel?.isLoading() == true
 
     override fun loadMoreItems() {
         viewModel?.fetchRepoList()
     }
 
     private fun injectDependency() {
-        var repoListComponent =  DaggerRepoListComponent.builder()
+        val repoListComponent = DaggerRepoListComponent.builder()
                 .repoListModule(RepoListModule())
                 .build()
         repoListComponent.inject(this)
@@ -77,23 +73,24 @@ class RepoListFragment: Fragment(), OnRepoClickListener, OnRepoScrollListener {
     }
 
     private fun observeViewState() {
-        viewModel?.isLoading?.observe(this, Observer {
+        viewModel?.getIsLoadingLiveData()?.observe(this, Observer {
             repoListRecyclerView?.setIsLoading(it ?: false)
         })
-        viewModel?.repoList?.observe(this, Observer {
+        viewModel?.getRepoListLiveData()?.observe(this, Observer {
             repoListRecyclerView?.addAll(it)
         })
     }
 
     private fun showRepoDetails(repo: RepoEntity) {
         if (activity is Navigator) {
-            var navigator = activity as Navigator
+            val navigator = activity as Navigator
             navigator.replaceFragment(
                     RepoDetailsFragment.newInstance(repo), true)
         }
     }
 
     companion object {
+
         fun newInstance(): RepoListFragment {
             return RepoListFragment()
         }
