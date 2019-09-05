@@ -1,4 +1,4 @@
-package com.dreddi.android.githublist.presentation.di.modules.repodetails
+package com.dreddi.android.githublist.presentation.di.dagger.modules.repodetails
 
 import com.dreddi.android.githublist.presentation.repodetails.RepoDetailsViewModelFactory
 import dagger.Module

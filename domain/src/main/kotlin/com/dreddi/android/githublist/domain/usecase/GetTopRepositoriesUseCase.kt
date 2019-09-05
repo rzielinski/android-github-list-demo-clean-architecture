@@ -1,10 +1,10 @@
-package com.dreddi.android.githublist.domain.interactor
+package com.dreddi.android.githublist.domain.usecase
 
 import com.dreddi.android.githublist.domain.RepoRepository
 import com.dreddi.android.githublist.domain.entity.RepoListEntity
 import io.reactivex.Observable
 
-class GetTopRepositories(
+class GetTopRepositoriesUseCase(
         private val repoRepository: RepoRepository
 ) {
 
