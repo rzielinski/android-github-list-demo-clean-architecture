@@ -1,4 +1,4 @@
-package com.dreddi.android.githublist.presentation.di.modules
+package com.dreddi.android.githublist.presentation.di.dagger.modules
 
 import com.dreddi.android.githublist.BuildConfig
 import com.dreddi.android.githublist.data.mapper.RepoDataToEntityMapper

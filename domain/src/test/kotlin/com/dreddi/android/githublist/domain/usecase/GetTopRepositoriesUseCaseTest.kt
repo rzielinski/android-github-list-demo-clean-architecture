@@ -1,4 +1,4 @@
-package com.dreddi.android.githublist.domain.interactor
+package com.dreddi.android.githublist.domain.usecase
 
 import com.dreddi.android.githublist.domain.RepoRepository
 import com.dreddi.android.githublist.domain.entity.RepoEntity
@@ -9,7 +9,7 @@ import io.reactivex.observers.TestObserver
 import org.junit.Assert.*
 import org.junit.Test
 
-class GetTopRepositoriesTest {
+class GetTopRepositoriesUseCaseTest {
 
     @Test
     fun getTopRepositories_getRepositories() {

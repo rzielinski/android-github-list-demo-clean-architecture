@@ -4,13 +4,13 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import com.dreddi.android.githublist.domain.entity.RepoEntity
 import com.dreddi.android.githublist.domain.entity.RepoListEntity
-import com.dreddi.android.githublist.domain.interactor.GetTopRepositories
+import com.dreddi.android.githublist.domain.usecase.GetTopRepositoriesUseCase
 import com.dreddi.android.githublist.presentation.app.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class RepoListViewModel(
-        private val getTopRepositories: GetTopRepositories
+        private val getTopRepositoriesUseCase: GetTopRepositoriesUseCase
 ) : BaseViewModel() {
 
     private val isLoading: MutableLiveData<Boolean> =
@@ -36,7 +36,7 @@ class RepoListViewModel(
 
     fun fetchRepoList() {
         addDisposable(
-                getTopRepositories.getTopRepositories(page, perPage)
+                getTopRepositoriesUseCase.getTopRepositories(page, perPage)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnSubscribe {

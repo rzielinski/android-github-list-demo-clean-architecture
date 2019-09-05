@@ -1,11 +1,11 @@
 package com.dreddi.android.githublist.presentation.app
 
 import android.app.Application
-import com.dreddi.android.githublist.presentation.di.components.ApplicationComponent
-import com.dreddi.android.githublist.presentation.di.components.DaggerApplicationComponent
-import com.dreddi.android.githublist.presentation.di.modules.ApplicationModule
+import com.dreddi.android.githublist.presentation.di.dagger.components.ApplicationComponent
+import com.dreddi.android.githublist.presentation.di.dagger.components.DaggerApplicationComponent
+import com.dreddi.android.githublist.presentation.di.dagger.modules.ApplicationModule
 
-class App : Application() {
+class AppDagger : Application() {
 
     override fun onCreate() {
         super.onCreate()

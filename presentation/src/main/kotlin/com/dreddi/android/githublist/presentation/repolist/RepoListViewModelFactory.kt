@@ -2,13 +2,13 @@ package com.dreddi.android.githublist.presentation.repolist
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import com.dreddi.android.githublist.domain.interactor.GetTopRepositories
+import com.dreddi.android.githublist.domain.usecase.GetTopRepositoriesUseCase
 
 class RepoListViewModelFactory(
-        private val getTopRepositories: GetTopRepositories
+        private val getTopRepositoriesUseCase: GetTopRepositoriesUseCase
 ): ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return RepoListViewModel(getTopRepositories) as T
+        return RepoListViewModel(getTopRepositoriesUseCase) as T
     }
 }

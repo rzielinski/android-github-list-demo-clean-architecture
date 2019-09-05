@@ -1,7 +1,6 @@
 package com.dreddi.android.githublist.presentation.repodetails
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -14,24 +13,31 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dreddi.android.githublist.R
 import com.dreddi.android.githublist.domain.entity.RepoEntity
-import com.dreddi.android.githublist.presentation.di.components.repodetails.DaggerRepoDetailsComponent
-import com.dreddi.android.githublist.presentation.di.modules.repodetails.RepoDetailsModule
 import com.dreddi.android.githublist.presentation.extension.formatCount
 import com.dreddi.android.githublist.presentation.extension.gone
 import com.dreddi.android.githublist.presentation.extension.show
 import kotlinx.android.synthetic.main.fragment_repo_details.*
-import javax.inject.Inject
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class RepoDetailsFragment : Fragment() {
 
+    /** Dagger2
     @Inject
     lateinit var repoDetailsViewModelFactory: RepoDetailsViewModelFactory
 
-    private var viewModel: RepoDetailsViewModel? = null
+    private fun injectDependency() {
+        val repoDetailsComponent = DaggerRepoDetailsComponent.builder()
+                .repoDetailsModule(RepoDetailsModule())
+                .build()
+        repoDetailsComponent.inject(this)
+        viewModel = ViewModelProviders.of(this, repoDetailsViewModelFactory)
+                .get(RepoDetailsViewModel::class.java)
+    }**/
+
+    private val viewModel: RepoDetailsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectDependency()
         readArguments()
     }
 
@@ -46,21 +52,12 @@ class RepoDetailsFragment : Fragment() {
 
     private fun readArguments() {
         arguments?.takeIf { it.containsKey(ARG_REPO) }?.let { arguments ->
-            viewModel?.setRepo(arguments.getSerializable(ARG_REPO) as RepoEntity)
+            viewModel.setRepo(arguments.getSerializable(ARG_REPO) as RepoEntity)
         }
     }
 
-    private fun injectDependency() {
-        val repoDetailsComponent = DaggerRepoDetailsComponent.builder()
-                .repoDetailsModule(RepoDetailsModule())
-                .build()
-        repoDetailsComponent.inject(this)
-        viewModel = ViewModelProviders.of(this, repoDetailsViewModelFactory)
-                .get(RepoDetailsViewModel::class.java)
-    }
-
     private fun observeViewState() {
-        viewModel?.getRepoLiveData()?.observe(this, Observer {
+        viewModel.getRepoLiveData().observe(this, Observer {
             updateView(it)
         })
     }
@@ -95,7 +92,7 @@ class RepoDetailsFragment : Fragment() {
     }
 
     private fun showRepoHome() {
-        viewModel?.getRepo()?.let { repo ->
+        viewModel.getRepo()?.let { repo ->
             startActivity(Intent(Intent.ACTION_VIEW,
                     Uri.parse(repo.htmlUrl)))
         }
