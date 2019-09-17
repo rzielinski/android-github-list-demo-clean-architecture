@@ -1,10 +1,9 @@
 package com.dreddi.android.githublist.presentation.repodetails
 
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,7 @@ import com.dreddi.android.githublist.presentation.extension.show
 import kotlinx.android.synthetic.main.fragment_repo_details.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class RepoDetailsFragment : Fragment() {
+class RepoDetailsFragment : androidx.fragment.app.Fragment() {
 
     /** Dagger2
     @Inject
@@ -102,13 +101,9 @@ class RepoDetailsFragment : Fragment() {
 
         private const val ARG_REPO = "repo"
 
-        fun newInstance(repo: RepoEntity? = null): RepoDetailsFragment {
-            return RepoDetailsFragment().apply {
-                repo?.let {
-                    arguments = Bundle().apply {
-                        putSerializable(ARG_REPO, repo)
-                    }
-                }
+        fun getBundle(repo: RepoEntity? = null): Bundle {
+            return Bundle().apply {
+                putSerializable(ARG_REPO, repo)
             }
         }
     }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/repoListFragment">
+    <fragment
+        android:id="@+id/repoListFragment"
+        android:name="com.dreddi.android.githublist.presentation.repolist.RepoListFragment"
+        android:label="RepoListFragment" >
+        <action
+            android:id="@+id/action_repoListFragment_to_repoDetailsFragment"
+            app:destination="@id/repoDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/repoDetailsFragment"
+        android:name="com.dreddi.android.githublist.presentation.repodetails.RepoDetailsFragment"
+        android:label="RepoDetailsFragment" >
+        <argument
+            android:name="repo"
+            app:argType="com.dreddi.android.githublist.domain.entity.RepoEntity" />
+    </fragment>
+</navigation>

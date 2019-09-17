@@ -1,7 +1,7 @@
 package com.dreddi.android.githublist.presentation.repolist
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.dreddi.android.githublist.domain.entity.RepoEntity
 import com.dreddi.android.githublist.domain.entity.RepoListEntity
 import com.dreddi.android.githublist.domain.usecase.GetTopRepositoriesUseCase

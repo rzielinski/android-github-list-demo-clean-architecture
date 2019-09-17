@@ -1,21 +1,20 @@
 package com.dreddi.android.githublist.presentation.repolist
 
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.Observer
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import com.dreddi.android.githublist.R
 import com.dreddi.android.githublist.domain.entity.RepoEntity
-import com.dreddi.android.githublist.presentation.app.Navigator
 import com.dreddi.android.githublist.presentation.repodetails.RepoDetailsFragment
 import com.dreddi.android.githublist.presentation.views.OnRepoClickListener
 import com.dreddi.android.githublist.presentation.views.OnRepoScrollListener
 import kotlinx.android.synthetic.main.fragment_repo_list.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class RepoListFragment : Fragment(), OnRepoClickListener, OnRepoScrollListener {
+class RepoListFragment : androidx.fragment.app.Fragment(), OnRepoClickListener, OnRepoScrollListener {
 
     /** Dagger 2
     @Inject
@@ -74,15 +73,8 @@ class RepoListFragment : Fragment(), OnRepoClickListener, OnRepoScrollListener {
     }
 
     private fun showRepoDetails(repo: RepoEntity) {
-        if (activity is Navigator) {
-            val navigator = activity as Navigator
-            navigator.replaceFragment(
-                    RepoDetailsFragment.newInstance(repo), true)
-        }
-    }
-
-    companion object {
-
-        fun newInstance() = RepoListFragment()
+        val bundle = RepoDetailsFragment.getBundle(repo)
+        view?.findNavController()
+                ?.navigate(R.id.action_repoListFragment_to_repoDetailsFragment, bundle)
     }
 }

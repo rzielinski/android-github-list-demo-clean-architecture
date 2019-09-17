@@ -1,7 +1,7 @@
 package com.dreddi.android.githublist.presentation.repodetails
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.dreddi.android.githublist.domain.entity.RepoEntity
 import com.dreddi.android.githublist.presentation.app.BaseViewModel
 
