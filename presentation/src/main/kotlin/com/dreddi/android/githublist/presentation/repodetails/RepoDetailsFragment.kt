@@ -4,7 +4,6 @@ import androidx.lifecycle.Observer
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -102,13 +101,9 @@ class RepoDetailsFragment : androidx.fragment.app.Fragment() {
 
         private const val ARG_REPO = "repo"
 
-        fun newInstance(repo: RepoEntity? = null): RepoDetailsFragment {
-            return RepoDetailsFragment().apply {
-                repo?.let {
-                    arguments = Bundle().apply {
-                        putSerializable(ARG_REPO, repo)
-                    }
-                }
+        fun getBundle(repo: RepoEntity? = null): Bundle {
+            return Bundle().apply {
+                putSerializable(ARG_REPO, repo)
             }
         }
     }
