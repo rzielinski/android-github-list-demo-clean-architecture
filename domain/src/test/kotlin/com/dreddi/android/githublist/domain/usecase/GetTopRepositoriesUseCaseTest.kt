@@ -12,9 +12,9 @@ import org.junit.Test
 class GetTopRepositoriesUseCaseTest {
 
     @Test
-    fun getTopRepositories_getRepositories() {
+    fun `repo repository should return repositories`() {
 
-        var repoRepository = getTestRepoRepository()
+        val repoRepository = getTestRepoRepository()
         val testObserver = TestObserver<RepoListEntity>()
 
         repoRepository.getTopRepositories(0, 1)
@@ -24,14 +24,14 @@ class GetTopRepositoriesUseCaseTest {
         testObserver.assertNoErrors()
         testObserver.assertValueCount(1)
 
-        var repoListEntity = testObserver.values()[0];
+        val repoListEntity = testObserver.values()[0];
 
         assertNotNull(repoListEntity)
         assertEquals(repoListEntity.totalCount, 1)
         assertNotNull(repoListEntity.repoDataItemsList)
         assertEquals(repoListEntity.repoDataItemsList?.size, 1)
 
-        var repoEntity = repoListEntity.repoDataItemsList!![0]
+        val repoEntity = repoListEntity.repoDataItemsList!![0]
 
         assertNotNull(repoEntity)
         assertEquals(repoEntity.id, 1L)
@@ -39,13 +39,13 @@ class GetTopRepositoriesUseCaseTest {
         assertNotNull(repoEntity.owner)
     }
 
-    fun getTestRepoRepository(): RepoRepository {
+    private fun getTestRepoRepository(): RepoRepository {
 
-        var repoOwner = RepoOwnerEntity(1, "login", null, null, null, null, null,
+        val repoOwner = RepoOwnerEntity(1, "login", null, null, null, null, null,
                 null, null, null, null, null, null, null,
                 null, null, null, false)
 
-        var repo = RepoEntity(1, "test", null, null, null, null, null, null,
+        val repo = RepoEntity(1, "test", null, null, null, null, null, null,
                 null, null,null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null,
@@ -56,11 +56,11 @@ class GetTopRepositoriesUseCaseTest {
                 null, null, null, null, null, null, null, null,
                 repoOwner)
 
-        var repoDataItemsList: MutableList<RepoEntity> = mutableListOf<RepoEntity>()
-        repoDataItemsList.add(repo);
+        val repoDataItemsList = mutableListOf<RepoEntity>().apply {
+            add(repo)
+        }
 
-        var repoListEntity: RepoListEntity =
-                RepoListEntity(1, true, repoDataItemsList)
+        val repoListEntity = RepoListEntity(1, true, repoDataItemsList)
 
         return object: RepoRepository {
             override fun getTopRepositories(page: Int, perPage: Int): Observable<RepoListEntity> {

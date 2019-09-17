@@ -1,16 +1,16 @@
 package com.dreddi.android.githublist.presentation.views
 
 import android.content.Context
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.util.AttributeSet
 
 import com.dreddi.android.githublist.domain.entity.RepoEntity
 
-class RepoListRecyclerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0): RecyclerView(context, attrs, defStyle) {
+class RepoListRecyclerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0): androidx.recyclerview.widget.RecyclerView(context, attrs, defStyle) {
 
     private lateinit var adapter: RepoItemAdapter
-    private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var layoutManager: androidx.recyclerview.widget.LinearLayoutManager
     private var onRepoScrollListener: OnRepoScrollListener? = null
 
     init {
@@ -39,7 +39,7 @@ class RepoListRecyclerView @JvmOverloads constructor(context: Context, attrs: At
 
     private fun setView(context: Context) {
 
-        layoutManager = LinearLayoutManager(context).also {
+        layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context).also {
             setLayoutManager(it)
         }
 
@@ -47,8 +47,8 @@ class RepoListRecyclerView @JvmOverloads constructor(context: Context, attrs: At
             setAdapter(it)
         }
 
-        addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
                 onRepoScrollListener?.let { listener ->

@@ -1,9 +1,9 @@
 package com.dreddi.android.githublist.presentation.app
 
 import android.os.Bundle
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import androidx.fragment.app.FragmentManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 
 import com.dreddi.android.githublist.R
 import com.dreddi.android.githublist.presentation.repolist.RepoListFragment
@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity(), Navigator {
         setView()
     }
 
-    override fun getNavigatorFragmentManager(): FragmentManager {
+    override fun getNavigatorFragmentManager(): androidx.fragment.app.FragmentManager {
         return supportFragmentManager
     }
 

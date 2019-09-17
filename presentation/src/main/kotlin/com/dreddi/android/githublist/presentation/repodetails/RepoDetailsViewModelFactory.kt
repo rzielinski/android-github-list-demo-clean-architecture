@@ -1,7 +1,7 @@
 package com.dreddi.android.githublist.presentation.repodetails
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 
 class RepoDetailsViewModelFactory : ViewModelProvider.Factory {
 

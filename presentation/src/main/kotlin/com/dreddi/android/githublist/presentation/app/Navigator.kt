@@ -1,14 +1,14 @@
 package com.dreddi.android.githublist.presentation.app
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 
 interface Navigator {
 
-    fun getNavigatorFragmentManager(): FragmentManager
+    fun getNavigatorFragmentManager(): androidx.fragment.app.FragmentManager
     fun getNavigatorFragmentContainer(): Int
 
-    fun replaceFragment(fragment: Fragment, addToBackStack: Boolean) {
+    fun replaceFragment(fragment: androidx.fragment.app.Fragment, addToBackStack: Boolean) {
         val fm = getNavigatorFragmentManager()
         val container = getNavigatorFragmentContainer()
         if (addToBackStack) {
@@ -23,7 +23,7 @@ interface Navigator {
         }
     }
 
-    fun replaceFragmentExclusive(fragment: Fragment, addToBackStack: Boolean) {
+    fun replaceFragmentExclusive(fragment: androidx.fragment.app.Fragment, addToBackStack: Boolean) {
         if (getNavigatorFragmentManager().findFragmentByTag(fragment.javaClass.name) == null) {
             replaceFragment(fragment, addToBackStack)
         }

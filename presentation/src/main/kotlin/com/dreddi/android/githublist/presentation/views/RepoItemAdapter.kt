@@ -1,6 +1,6 @@
 package com.dreddi.android.githublist.presentation.views
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.view_repo_list_item.view.*
 
 import java.util.ArrayList
 
-class RepoItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RepoItemAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     private var isLoading: Boolean = false
     private var repoItemsList: MutableList<RepoEntity> = mutableListOf()
@@ -22,7 +22,7 @@ class RepoItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         this.onRepoClickListener = onRepoClickListener
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
 
         val inflater = LayoutInflater.from(parent.context)
 
@@ -35,7 +35,7 @@ class RepoItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (getItemViewType(position) == TYPE_ITEM) {
             (holder as RepoItemViewHolder).bind(repoItemsList[position])
         }
@@ -78,7 +78,7 @@ class RepoItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         notifyDataSetChanged()
     }
 
-    private inner class RepoItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    private inner class RepoItemViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
         fun bind(repo: RepoEntity?) {
             repo?.run {
@@ -92,7 +92,7 @@ class RepoItemAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    private inner class RepoItemLoadingViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    private inner class RepoItemLoadingViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view)
 
     companion object {
 

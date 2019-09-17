@@ -1,7 +1,7 @@
 package com.dreddi.android.githublist.presentation.repolist
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.dreddi.android.githublist.domain.usecase.GetTopRepositoriesUseCase
 
 class RepoListViewModelFactory(
