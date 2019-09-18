@@ -5,16 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.dreddi.android.githublist.R
 import com.dreddi.android.githublist.domain.entity.RepoEntity
-import com.dreddi.android.githublist.presentation.repodetails.RepoDetailsFragment
-import com.dreddi.android.githublist.presentation.views.OnRepoClickListener
+import com.dreddi.android.githublist.presentation.MainViewModel
+import com.dreddi.android.githublist.presentation.NavigationEvent
 import com.dreddi.android.githublist.presentation.views.OnRepoScrollListener
+import com.dreddi.android.githublist.presentation.repolist.adapter.RepoItemAdapter
 import kotlinx.android.synthetic.main.fragment_repo_list.*
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class RepoListFragment : androidx.fragment.app.Fragment(), OnRepoClickListener, OnRepoScrollListener {
+class RepoListFragment : androidx.fragment.app.Fragment(), OnRepoScrollListener {
 
     /** Dagger 2
     @Inject
@@ -29,7 +31,9 @@ class RepoListFragment : androidx.fragment.app.Fragment(), OnRepoClickListener, 
                 .get(RepoListViewModel::class.java)
     }**/
 
+    private lateinit var repoItemAdapter: RepoItemAdapter
     private val viewModel: RepoListViewModel by viewModel()
+    private val mainViewModel: MainViewModel by sharedViewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_repo_list, container, false)
@@ -38,11 +42,7 @@ class RepoListFragment : androidx.fragment.app.Fragment(), OnRepoClickListener, 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setView()
-        observeViewState()
-    }
-
-    override fun onRepoClicked(repo: RepoEntity) {
-        showRepoDetails(repo)
+        observe()
     }
 
     override fun isLastPage(): Boolean = false
@@ -55,26 +55,27 @@ class RepoListFragment : androidx.fragment.app.Fragment(), OnRepoClickListener, 
 
     private fun setView() {
         with(repoListRecyclerView) {
-            setOnRepoClickListener(this@RepoListFragment)
-            setOnRepoScrollListener(this@RepoListFragment)
+            layoutManager = LinearLayoutManager(context)
+            adapter = RepoItemAdapter(::onRepoClick).also {
+                repoItemAdapter = it
+            }
         }
     }
 
-    private fun observeViewState() {
+    private fun observe() {
         viewModel.getIsLoadingLiveData().observe(this, Observer {
-            repoListRecyclerView?.setIsLoading(it ?: false)
+            repoItemAdapter.setIsLoading(it == true)
         })
         viewModel.getRepoListLiveData().observe(this, Observer {
-            repoListRecyclerView?.addAll(it)
+            repoItemAdapter.append(it)
         })
         if (!viewModel.isData()) {
             viewModel.fetchRepoList()
         }
     }
 
-    private fun showRepoDetails(repo: RepoEntity) {
-        val bundle = RepoDetailsFragment.getBundle(repo)
-        view?.findNavController()
-                ?.navigate(R.id.action_repoListFragment_to_repoDetailsFragment, bundle)
+    private fun onRepoClick(repo: RepoEntity) {
+        mainViewModel.setNavigationEvent(
+                NavigationEvent.ShowRepoDetails(repo))
     }
 }

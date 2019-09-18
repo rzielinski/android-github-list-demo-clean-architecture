@@ -1,4 +1,4 @@
-package com.dreddi.android.githublist.presentation.views
+package com.dreddi.android.githublist.presentation.repolist.adapter
 
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
@@ -7,22 +7,17 @@ import android.view.ViewGroup
 
 import com.dreddi.android.githublist.R
 import com.dreddi.android.githublist.domain.entity.RepoEntity
-import com.dreddi.android.githublist.presentation.extension.formatCount
+import com.dreddi.android.githublist.presentation.common.formatCount
 import kotlinx.android.synthetic.main.view_repo_list_item.view.*
 
-import java.util.ArrayList
-
-class RepoItemAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class RepoItemAdapter(
+        private val onRepoClick: (RepoEntity) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var isLoading: Boolean = false
     private var repoItemsList: MutableList<RepoEntity> = mutableListOf()
-    private var onRepoClickListener: OnRepoClickListener? = null
 
-    fun setOnRepoClickListener(onRepoClickListener: OnRepoClickListener) {
-        this.onRepoClickListener = onRepoClickListener
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
         val inflater = LayoutInflater.from(parent.context)
 
@@ -35,31 +30,27 @@ class RepoItemAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<androi
         }
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (getItemViewType(position) == TYPE_ITEM) {
             (holder as RepoItemViewHolder).bind(repoItemsList[position])
         }
     }
 
     override fun getItemCount(): Int {
-        return if (isLoading) repoItemsList.size + 1 else repoItemsList.size
+        return if (isLoading)
+            repoItemsList.size + 1
+        else
+            repoItemsList.size
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (isLoading && position == repoItemsList.size) {
+        return if (isLoading && position == repoItemsList.size)
             TYPE_LOADING
-        } else TYPE_ITEM
+        else
+            TYPE_ITEM
     }
 
-    fun add(repo: RepoEntity?) {
-        if ((repo == null) || repoItemsList.contains(repo)) {
-            return
-        }
-        repoItemsList.add(repo)
-        notifyItemInserted(repoItemsList.size - 1)
-    }
-
-    fun addAll(repoItemsList: List<RepoEntity>?) {
+    fun append(repoItemsList: List<RepoEntity>?) {
         if (repoItemsList == null) {
             return
         }
@@ -68,17 +59,20 @@ class RepoItemAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<androi
         }
     }
 
-    fun set(repoItemsList: List<RepoEntity>?) {
-        this.repoItemsList = ArrayList()
-        addAll(repoItemsList)
-    }
-
     fun setIsLoading(isLoading: Boolean) {
         this.isLoading = isLoading
         notifyDataSetChanged()
     }
 
-    private inner class RepoItemViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+    private fun add(repo: RepoEntity?) {
+        if ((repo == null) || repoItemsList.contains(repo)) {
+            return
+        }
+        repoItemsList.add(repo)
+        notifyItemInserted(repoItemsList.size - 1)
+    }
+
+    private inner class RepoItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         fun bind(repo: RepoEntity?) {
             repo?.run {
@@ -86,13 +80,13 @@ class RepoItemAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<androi
                 itemView.repoListItemName.text = name
                 itemView.repoListItemDesc.text = description
                 itemView.repoListItemLayout.setOnClickListener {
-                    onRepoClickListener?.onRepoClicked(repo)
+                    onRepoClick(repo)
                 }
             }
         }
     }
 
-    private inner class RepoItemLoadingViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view)
+    private inner class RepoItemLoadingViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     companion object {
 

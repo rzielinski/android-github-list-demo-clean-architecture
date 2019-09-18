@@ -2,10 +2,10 @@ package com.dreddi.android.githublist.presentation.repodetails
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.dreddi.android.githublist.domain.entity.RepoEntity
-import com.dreddi.android.githublist.presentation.app.BaseViewModel
 
-class RepoDetailsViewModel : BaseViewModel() {
+class RepoDetailsViewModel : ViewModel() {
 
     private val repo: MutableLiveData<RepoEntity> = MutableLiveData()
 
