@@ -1,21 +1,21 @@
 package com.dreddi.android.githublist.presentation.repodetails
 
 import androidx.lifecycle.Observer
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.dreddi.android.githublist.R
 import com.dreddi.android.githublist.domain.entity.RepoEntity
-import com.dreddi.android.githublist.presentation.extension.formatCount
-import com.dreddi.android.githublist.presentation.extension.gone
-import com.dreddi.android.githublist.presentation.extension.show
+import com.dreddi.android.githublist.presentation.MainViewModel
+import com.dreddi.android.githublist.presentation.NavigationEvent
+import com.dreddi.android.githublist.presentation.common.formatCount
+import com.dreddi.android.githublist.presentation.common.gone
+import com.dreddi.android.githublist.presentation.common.loadFromUrl
+import com.dreddi.android.githublist.presentation.common.show
 import kotlinx.android.synthetic.main.fragment_repo_details.*
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class RepoDetailsFragment : androidx.fragment.app.Fragment() {
@@ -34,6 +34,7 @@ class RepoDetailsFragment : androidx.fragment.app.Fragment() {
     }**/
 
     private val viewModel: RepoDetailsViewModel by viewModel()
+    private val mainViewModel: MainViewModel by sharedViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,54 +47,42 @@ class RepoDetailsFragment : androidx.fragment.app.Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observeViewState()
+        observe()
     }
 
     private fun readArguments() {
-        arguments?.takeIf { it.containsKey(ARG_REPO) }?.let { arguments ->
-            viewModel.setRepo(arguments.getSerializable(ARG_REPO) as RepoEntity)
+        arguments?.getSerializable(ARG_REPO)?.let { repo ->
+            viewModel.setRepo(repo as RepoEntity)
         }
     }
 
-    private fun observeViewState() {
+    private fun observe() {
         viewModel.getRepoLiveData().observe(this, Observer {
             updateView(it)
         })
     }
 
     private fun updateView(repo: RepoEntity?) {
-
         if (repo != null) {
-
-            Glide.with(this)
-                    .applyDefaultRequestOptions(RequestOptions()
-                            .error(R.drawable.ic_person))
-                    .load(repo.owner.avatarUrl)
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(repoDetailsAvatar)
-
             repoDetailsName.text = repo.name
             repoDetailsDesc.text = repo.description
             repoDetailsWatch.text = repo.watchersCount.formatCount(resources)
             repoDetailsStars.text = repo.stargazersCount.formatCount(resources)
             repoDetailsFork.text = repo.forksCount.formatCount(resources)
-
+            repoDetailsAvatar.loadFromUrl(repo.owner.avatarUrl, R.drawable.ic_person)
             repoDetailsSeeMore.setOnClickListener {
                 showRepoHome()
             }
-
             repoDetailsLayout.show()
-
         } else {
-
             repoDetailsLayout.gone()
         }
     }
 
     private fun showRepoHome() {
         viewModel.getRepo()?.let { repo ->
-            startActivity(Intent(Intent.ACTION_VIEW,
-                    Uri.parse(repo.htmlUrl)))
+            mainViewModel.setNavigationEvent(
+                    NavigationEvent.ShowExternalUrl(repo.htmlUrl.orEmpty()))
         }
     }
 

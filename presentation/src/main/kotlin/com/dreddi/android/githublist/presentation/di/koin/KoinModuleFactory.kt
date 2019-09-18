@@ -10,6 +10,7 @@ import com.dreddi.android.githublist.data.repository.store.CloudRepoStore
 import com.dreddi.android.githublist.data.repository.store.RepoStore
 import com.dreddi.android.githublist.domain.RepoRepository
 import com.dreddi.android.githublist.domain.usecase.GetTopRepositoriesUseCase
+import com.dreddi.android.githublist.presentation.MainViewModel
 import com.dreddi.android.githublist.presentation.repodetails.RepoDetailsViewModel
 import com.dreddi.android.githublist.presentation.repolist.RepoListViewModel
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -24,6 +25,7 @@ object KoinModuleFactory {
 
     fun create() = module {
 
+        viewModel { MainViewModel() }
         viewModel { RepoDetailsViewModel() }
         viewModel { RepoListViewModel( getTopRepositoriesUseCase = get() ) }
 

@@ -1,7 +1,10 @@
-package com.dreddi.android.githublist.presentation.extension
+package com.dreddi.android.githublist.presentation.common
 
 import android.content.res.Resources
 import android.view.View
+import android.widget.ImageView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.dreddi.android.githublist.R
 
 fun Long?.formatCount(res: Resources): String {
@@ -13,6 +16,15 @@ fun Long?.formatCount(res: Resources): String {
             count.toString()
         }
     } ?: ""
+}
+
+fun ImageView.loadFromUrl(url: String?, errorDrawableResId: Int) {
+    Glide.with(this)
+            .applyDefaultRequestOptions(
+                    RequestOptions().error(errorDrawableResId))
+            .load(url)
+            .apply(RequestOptions.circleCropTransform())
+            .into(this)
 }
 
 fun View.show() {
