@@ -18,19 +18,6 @@ import org.koin.android.viewmodel.ext.android.viewModel
 
 class RepoListFragment : androidx.fragment.app.Fragment(), OnRepoScrollListener {
 
-    /** Dagger 2
-    @Inject
-    lateinit var repoListViewModelFactory: RepoListViewModelFactory
-
-    private fun injectDependency() {
-        val repoListComponent = DaggerRepoListComponent.builder()
-                .repoListModule(RepoListModule())
-                .build()
-        repoListComponent.inject(this)
-        viewModel = ViewModelProviders.of(this, repoListViewModelFactory)
-                .get(RepoListViewModel::class.java)
-    }**/
-
     private lateinit var repoItemAdapter: RepoItemAdapter
     private val viewModel: RepoListViewModel by viewModel()
     private val mainViewModel: MainViewModel by sharedViewModel()

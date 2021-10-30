@@ -1,4 +1,4 @@
-package com.dreddi.android.githublist.presentation.di.koin
+package com.dreddi.android.githublist.presentation.di
 
 import com.dreddi.android.githublist.BuildConfig
 import com.dreddi.android.githublist.data.mapper.RepoDataToEntityMapper

@@ -20,19 +20,6 @@ import org.koin.android.viewmodel.ext.android.viewModel
 
 class RepoDetailsFragment : androidx.fragment.app.Fragment() {
 
-    /** Dagger2
-    @Inject
-    lateinit var repoDetailsViewModelFactory: RepoDetailsViewModelFactory
-
-    private fun injectDependency() {
-        val repoDetailsComponent = DaggerRepoDetailsComponent.builder()
-                .repoDetailsModule(RepoDetailsModule())
-                .build()
-        repoDetailsComponent.inject(this)
-        viewModel = ViewModelProviders.of(this, repoDetailsViewModelFactory)
-                .get(RepoDetailsViewModel::class.java)
-    }**/
-
     private val viewModel: RepoDetailsViewModel by viewModel()
     private val mainViewModel: MainViewModel by sharedViewModel()
 
