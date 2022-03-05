@@ -1,10 +1,10 @@
 package com.dreddi.android.githublist.presentation.repodetails
 
-import androidx.lifecycle.Observer
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 
 import com.dreddi.android.githublist.R
 import com.dreddi.android.githublist.domain.entity.RepoEntity
@@ -15,6 +15,7 @@ import com.dreddi.android.githublist.presentation.common.gone
 import com.dreddi.android.githublist.presentation.common.loadFromUrl
 import com.dreddi.android.githublist.presentation.common.show
 import kotlinx.android.synthetic.main.fragment_repo_details.*
+import kotlinx.coroutines.flow.collect
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -44,9 +45,11 @@ class RepoDetailsFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun observe() {
-        viewModel.getRepoLiveData().observe(this, Observer {
-            updateView(it)
-        })
+        lifecycleScope.launchWhenStarted {
+            viewModel.repoFlow().collect {
+                updateView(it)
+            }
+        }
     }
 
     private fun updateView(repo: RepoEntity?) {

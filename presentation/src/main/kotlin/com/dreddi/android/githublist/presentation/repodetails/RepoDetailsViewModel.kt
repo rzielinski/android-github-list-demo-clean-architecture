@@ -1,13 +1,15 @@
 package com.dreddi.android.githublist.presentation.repodetails
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.dreddi.android.githublist.domain.entity.RepoEntity
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class RepoDetailsViewModel : ViewModel() {
 
-    private val repo: MutableLiveData<RepoEntity> = MutableLiveData()
+    private val repo: MutableStateFlow<RepoEntity?> = MutableStateFlow(null)
+
+    fun repoFlow(): StateFlow<RepoEntity?> = repo
 
     fun getRepo(): RepoEntity? {
         return repo.value
@@ -16,6 +18,4 @@ class RepoDetailsViewModel : ViewModel() {
     fun setRepo(repo: RepoEntity) {
         this.repo.value = repo
     }
-
-    fun getRepoLiveData() = repo as LiveData<RepoEntity>
 }
