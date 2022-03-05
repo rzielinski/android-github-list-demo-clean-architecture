@@ -1,7 +1,5 @@
 package com.dreddi.android.githublist.presentation.repolist
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.dreddi.android.githublist.domain.entity.RepoEntity
 import com.dreddi.android.githublist.domain.entity.RepoListEntity
@@ -9,37 +7,34 @@ import com.dreddi.android.githublist.domain.usecase.GetTopRepositoriesUseCase
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class RepoListViewModel(
         private val getTopRepositoriesUseCase: GetTopRepositoriesUseCase
 ) : ViewModel() {
 
-    private val isLoading: MutableLiveData<Boolean> =
-            MutableLiveData<Boolean>().apply {
-                value = false
-            }
-
-    private val repoList: MutableLiveData<MutableList<RepoEntity>> =
-            MutableLiveData<MutableList<RepoEntity>>().apply {
-                value = mutableListOf()
-            }
+    private val isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val repoList: MutableStateFlow<MutableList<RepoEntity>> = MutableStateFlow(mutableListOf())
 
     private var page: Int = 1
     private var perPage: Int = 10
 
     private val disposables = CompositeDisposable()
 
+    init {
+        fetchRepoList()
+    }
+
     override fun onCleared() {
         disposables.clear()
     }
 
-    fun isData() = repoList.value?.size != 0
+    fun isLoading() = isLoading.value
 
-    fun isLoading() = isLoading.value == true
+    fun isLoadingFlow(): StateFlow<Boolean> = isLoading
 
-    fun getIsLoadingLiveData() = isLoading as LiveData<Boolean>
-
-    fun getRepoListLiveData() = repoList as LiveData<MutableList<RepoEntity>>
+    fun repoListFlow(): StateFlow<MutableList<RepoEntity>> = repoList
 
     fun fetchRepoList() {
         getTopRepositoriesUseCase.getTopRepositories(page, perPage)
@@ -58,9 +53,9 @@ class RepoListViewModel(
     }
 
     private fun appendData(repoListEntity: RepoListEntity) {
-        val newRepoList = repoList.value
-        repoListEntity.repoDataItemsList?.forEach { repo ->
-            newRepoList?.add(repo)
+        val newRepoList = repoList.value.toMutableList()
+        repoListEntity.repoDataItemsList?.let {
+            newRepoList.addAll(it)
         }
         repoList.value = newRepoList
     }

@@ -5,12 +5,13 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import org.koin.android.viewmodel.ext.android.viewModel
 
 import com.dreddi.android.githublist.R
 import com.dreddi.android.githublist.presentation.repodetails.RepoDetailsFragment
+import kotlinx.coroutines.flow.collect
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,14 +31,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observe() {
-        viewModel.getNavigationEventLiveData().observe(this, Observer { event ->
-            event.getContentIfNotHandled()?.let {
-                when (it) {
-                    is NavigationEvent.ShowRepoDetails -> it.navigate()
-                    is NavigationEvent.ShowExternalUrl -> it.navigate()
+        lifecycleScope.launchWhenStarted {
+            viewModel.navigationEventFlow().collect { event ->
+                event.getContentIfNotHandled()?.let {
+                    when (it) {
+                        is NavigationEvent.ShowRepoDetails -> it.navigate()
+                        is NavigationEvent.ShowExternalUrl -> it.navigate()
+                    }
                 }
             }
-        })
+        }
     }
 
     private fun NavigationEvent.ShowRepoDetails.navigate() {

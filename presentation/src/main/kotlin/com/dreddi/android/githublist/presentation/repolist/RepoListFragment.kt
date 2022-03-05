@@ -1,10 +1,10 @@
 package com.dreddi.android.githublist.presentation.repolist
 
-import androidx.lifecycle.Observer
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dreddi.android.githublist.R
 import com.dreddi.android.githublist.domain.entity.RepoEntity
@@ -13,6 +13,7 @@ import com.dreddi.android.githublist.presentation.NavigationEvent
 import com.dreddi.android.githublist.presentation.views.OnRepoScrollListener
 import com.dreddi.android.githublist.presentation.repolist.adapter.RepoItemAdapter
 import kotlinx.android.synthetic.main.fragment_repo_list.*
+import kotlinx.coroutines.flow.collect
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -46,18 +47,20 @@ class RepoListFragment : androidx.fragment.app.Fragment(), OnRepoScrollListener 
             adapter = RepoItemAdapter(::onRepoClick).also {
                 repoItemAdapter = it
             }
+            setOnRepoScrollListener(this@RepoListFragment)
         }
     }
 
     private fun observe() {
-        viewModel.getIsLoadingLiveData().observe(this, Observer {
-            repoItemAdapter.setIsLoading(it == true)
-        })
-        viewModel.getRepoListLiveData().observe(this, Observer {
-            repoItemAdapter.append(it)
-        })
-        if (!viewModel.isData()) {
-            viewModel.fetchRepoList()
+        lifecycleScope.launchWhenStarted {
+            viewModel.isLoadingFlow().collect {
+                repoItemAdapter.setIsLoading(it)
+            }
+        }
+        lifecycleScope.launchWhenStarted {
+            viewModel.repoListFlow().collect {
+                repoItemAdapter.append(it)
+            }
         }
     }
 

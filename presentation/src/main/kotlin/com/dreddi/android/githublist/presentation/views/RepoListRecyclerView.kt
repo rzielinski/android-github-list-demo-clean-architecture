@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.AttributeSet
 import androidx.recyclerview.widget.RecyclerView
 
-class RepoListRecyclerView(
+class RepoListRecyclerView @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyle: Int = 0
@@ -29,20 +29,15 @@ class RepoListRecyclerView(
         }
 
         addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
 
                 onRepoScrollListener?.let { listener ->
-
-                    if (!listener.isLoading() && !listener.isLastPage()) {
-
-                        val visibleItemCount = layoutManager.childCount
-                        val totalItemCount = layoutManager.itemCount
-                        val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-
-                        if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
-                            listener.loadMoreItems()
-                        }
+                    if (!listener.isLoading() && !listener.isLastPage() &&
+                        !recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE
+                    ) {
+                        listener.loadMoreItems()
                     }
                 }
             }

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.dreddi.android.githublist.presentation.views.RepoListRecyclerView
         android:id="@+id/repoListRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
